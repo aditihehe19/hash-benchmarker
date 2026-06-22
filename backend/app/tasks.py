@@ -1,6 +1,9 @@
 from app.celery_app import celery_app
 from app.benchmark import benchmark_algorithm
 
+from app.database import SessionLocal
+from app.crud import save_benchmark_result
+
 
 @celery_app.task
 def run_benchmark_task(
@@ -12,7 +15,7 @@ def run_benchmark_task(
     parallelism
 ):
 
-    return benchmark_algorithm(
+    result = benchmark_algorithm(
         algorithm=algorithm,
         password=password,
         work_factor=work_factor,
@@ -20,3 +23,18 @@ def run_benchmark_task(
         time_cost=time_cost,
         parallelism=parallelism
     )
+
+    db = SessionLocal()
+
+    try:
+
+        save_benchmark_result(
+            db,
+            result
+        )
+
+    finally:
+
+        db.close()
+
+    return result

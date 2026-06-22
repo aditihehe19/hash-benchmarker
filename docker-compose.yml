@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: hash_postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aditi19
+      POSTGRES_DB: hash_benchmark_db
+
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: hash_redis
+
+    ports:
+      - "6379:6379"
+
+  api:
+    build: ./backend
+
+    container_name: hash_api
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: ./backend
+
+    container_name: hash_worker
+
+    command: celery -A app.celery_app worker --loglevel=info -P solo
+
+    depends_on:
+      - redis
+      - postgres

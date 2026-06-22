@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from app.database import engine
+from app.database import engine, Base
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.tasks import run_benchmark_task
-from app.db_models import Base
+import app.db_models 
 from app.benchmark import benchmark_algorithm
 from app.models import BenchmarkRequest
 from app.models import (
@@ -28,7 +28,11 @@ from celery.result import AsyncResult
 app = FastAPI(
     title="Hash Benchmark Platform"
 )
-Base.metadata.create_all(bind=engine)
+#@app.on_event("startup")
+#def startup():
+
+ #   Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def home():
