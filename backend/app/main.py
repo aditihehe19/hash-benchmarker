@@ -1,33 +1,31 @@
-from fastapi import FastAPI
-from app.database import engine, Base
-from fastapi import Depends
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from app.database import get_db
+from contextlib import asynccontextmanager
+
+from app.database import engine, get_db
+from app.db_models import Base
 from app.tasks import run_benchmark_task
-import app.db_models 
 from app.benchmark import benchmark_algorithm
-from app.models import BenchmarkRequest
-from app.models import (
-    BenchmarkRequest,
-    CompareRequest
+from app.models import BenchmarkRequest, CompareRequest
+from app.crud import (
+    save_benchmark_result, get_all_results, get_analytics,
+    get_security_rankings, get_recommendation, get_security_analysis,
+    get_optimal_config, get_hardware_profile, estimate_attack_cost,
+    export_report, get_secure_recommendation
+)
+from celery.result import AsyncResult
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)  # runs once on startup
+    yield
+
+app = FastAPI(
+    title="Hash Benchmark Platform",
+    lifespan=lifespan
 )
 
-from app.crud import (
-    save_benchmark_result,
-    get_all_results,
-    get_analytics,
-    get_security_rankings,
-    get_recommendation,
-    get_security_analysis,
-    get_optimal_config,
-    get_hardware_profile,
-    estimate_attack_cost,
-    export_report,
-    get_secure_recommendation)
-from celery.result import AsyncResult
-app = FastAPI(
-    title="Hash Benchmark Platform"
-)
+# ... rest of your routes unchanged
 #@app.on_event("startup")
 #def startup():
 
@@ -194,21 +192,22 @@ def benchmark_async(
         "status": "queued"
     }
 @app.get("/task-status/{task_id}")
-def get_task_status(
-    task_id: str
-):
-
-    task = AsyncResult(
-        task_id,
-        app=run_benchmark_task.app
-    )
-
-    return {
+def get_task_status(task_id: str):
+    task = AsyncResult(task_id, app=run_benchmark_task.app)
+    
+    response = {
         "task_id": task_id,
         "status": task.status,
-        "result": (
-            task.result
-            if task.ready()
-            else None
-        )
+        "result": None,
+        "error": None
     }
+    
+    if task.ready():
+        if task.successful():
+            response["result"] = task.result
+        else:
+            # This exposes the actual exception so you can debug it
+            response["error"] = str(task.result)
+            response["traceback"] = task.traceback
+    
+    return response

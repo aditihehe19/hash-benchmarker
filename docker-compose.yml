@@ -1,45 +1,55 @@
-version: "3.9"
-
 services:
 
   postgres:
     image: postgres:16
     container_name: hash_postgres
-
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: aditi19
       POSTGRES_DB: hash_benchmark_db
-
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hash_benchmark_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   redis:
     image: redis:7
     container_name: hash_redis
-
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   api:
     build: ./backend
-
     container_name: hash_api
-
     ports:
       - "8000:8000"
-
+    environment:
+      DATABASE_URL: postgresql://postgres:aditi19@postgres:5432/hash_benchmark_db
+      REDIS_URL: redis://redis:6379/0
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   worker:
     build: ./backend
-
     container_name: hash_worker
-
     command: celery -A app.celery_app worker --loglevel=info -P solo
-
+    environment:
+      DATABASE_URL: postgresql://postgres:aditi19@postgres:5432/hash_benchmark_db
+      REDIS_URL: redis://redis:6379/0
     depends_on:
-      - redis
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
