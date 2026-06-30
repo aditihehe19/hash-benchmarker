@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, get_db
 from app.db_models import Base
 from app.tasks import run_benchmark_task
 from app.benchmark import benchmark_algorithm
 from app.models import BenchmarkRequest, CompareRequest
-from app.crud import (
+from backend.app.benchmark_service import (
     save_benchmark_result, get_all_results, get_analytics,
     get_security_rankings, get_recommendation, get_security_analysis,
     get_optimal_config, get_hardware_profile, estimate_attack_cost,
@@ -23,6 +23,16 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Hash Benchmark Platform",
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ... rest of your routes unchanged

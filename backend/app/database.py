@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql://postgres:aditi19@localhost:5432/hash_benchmark_db"
+    "postgresql://postgres:aditi0402@localhost:5432/hash_benchmark_db"
 )
 
 engine = create_engine(DATABASE_URL)

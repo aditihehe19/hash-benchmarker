@@ -2,7 +2,7 @@ from app.celery_app import celery_app
 from app.benchmark import benchmark_algorithm
 
 from app.database import SessionLocal
-from app.crud import save_benchmark_result
+from backend.app.benchmark_service import save_benchmark_result
 
 
 @celery_app.task

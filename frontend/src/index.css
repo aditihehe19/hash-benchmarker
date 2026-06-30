@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #05070c;
+    color: #94a3b8;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom premium scrollbars for modern SaaS feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(8, 11, 17, 0.5);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.3);
+  }
+}
+
+/* Floating custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Moving gradient mesh style */
+@keyframes mesh {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-mesh {
+  background: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0%, #05070c 100%);
+  background-size: 200% 200%;
+  animation: mesh 15s ease infinite;
+}
+
+/* Cybernetic subtle grid pattern */
+.cyber-grid {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Subtle background glowing spots */
+.glow-purple {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0,0,0,0) 70%);
+}
+
+.glow-cyan {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(0,0,0,0) 70%);
+}
+
+/* Cybernetic Scanline Effect */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.cyber-scanline::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(6, 182, 212, 0.08) 10%,
+    rgba(6, 182, 212, 0.15) 50%,
+    rgba(6, 182, 212, 0.08) 90%,
+    transparent 100%
+  );
+  animation: scanline 6s linear infinite;
+  pointer-events: none;
+}
+
+/* Cybernetic Purple Scanline Effect */
+.cyber-scanline-purple::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(168, 85, 247, 0.08) 10%,
+    rgba(168, 85, 247, 0.15) 50%,
+    rgba(168, 85, 247, 0.08) 90%,
+    transparent 100%
+  );
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+}
+
+/* Holographic blinking radar sweep */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-sweep-element {
+  background: conic-gradient(from 0deg, rgba(6, 182, 212, 0.15) 0deg, rgba(6, 182, 212, 0.01) 90deg, transparent 180deg);
+  animation: radar-sweep 4s linear infinite;
+}
+
+/* Glitch text effect keyframes */
+@keyframes glitch-anim-1 {
+  0%, 100% { clip-path: inset(40% 0 61% 0); }
+  20% { clip-path: inset(92% 0 1% 0); }
+  40% { clip-path: inset(15% 0 80% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(3% 0 92% 0); }
+}
+
+.glitch-text {
+  position: relative;
+}
+.glitch-text::before {
+  content: attr(data-text);
+  position: absolute;
+  left: -1px;
+  text-shadow: 1px 0 #a855f7;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim-1 5s infinite linear alternate-reverse;
+  background: #05070c;
+  overflow: hidden;
+}
+
+/* Custom corner brackets */
+.bracket-tl::before, .bracket-tl::after,
+.bracket-tr::before, .bracket-tr::after,
+.bracket-bl::before, .bracket-bl::after,
+.bracket-br::before, .bracket-br::after {
+  content: "";
+  position: absolute;
+  background-color: rgba(6, 182, 212, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* Hover glow effects */
+.glow-on-hover:hover {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+  border-color: rgba(6, 182, 212, 0.4) !important;
+}
+.glow-on-hover-purple:hover {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.4) !important;
+}
+

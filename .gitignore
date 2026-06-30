@@ -1,7 +1,7 @@
 ﻿venv/
 __pycache__/
 *.pyc
-
+dist/
 .env
 
 .idea/
@@ -10,5 +10,5 @@ __pycache__/
 *.sqlite3
 
 .env.*
-
+node_modules/
 !.env.example
